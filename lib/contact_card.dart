@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'contact.dart';
-import 'package:share/share.dart';
 
-class ContactCard extends StatelessWidget {
+class ContactList extends StatelessWidget {
 
   Contact contact;
-  static bool timeFormat = true;
-  ContactCard(this.contact);
+  ContactList(this.contact);
 
-  //this function is used to show "1 hour(s) ago" etc.
   String getTextDisplay() {
 
     DateTime checkin = contact.time;
@@ -36,6 +33,7 @@ class ContactCard extends StatelessWidget {
           numberDisplay += 1;
         }
       }else{
+        print("hour called");
         numberDisplay = hourDifference;
         unitDisplay = " hour(s) ago";
         if(minuteDifference < 0){
@@ -87,13 +85,7 @@ class ContactCard extends StatelessWidget {
     return textDisplay;
   }
 
-  Widget buildCard(BuildContext context){
-    String timeDisplayStyle;
-    if(timeFormat){
-      timeDisplayStyle = contact.time.toString();
-    }else{
-      timeDisplayStyle = getTextDisplay();
-    }
+  Widget buildCard(){
     return Card(
         margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
         child: Column(
@@ -114,38 +106,23 @@ class ContactCard extends StatelessWidget {
                           fontSize: 15
                       )
                   ),
-                  SizedBox(width: 15),
+                  SizedBox(width: 12),
                   Text(
-                      timeDisplayStyle,
+                      getTextDisplay(),
                       style:TextStyle(
                           fontSize: 15
                       )
-                  ),
-                  SizedBox(width:10),
-                  TextButton(
-                      onPressed:contact.toString().isEmpty
-                          ? null
-                          : () => onShareData(context),
-                      child: Text('share'))
+                  )
                 ]
             )
           ],
-        ),
+        )
     );
-  }
-
-  onShareData(BuildContext context) async {
-    final RenderBox box = context.findRenderObject() as RenderBox;
-    {
-      await Share.share(contact.toString(),
-          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return buildCard(context);
+      return buildCard();
+    }
   }
-
-}
 
