@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'contact.dart';
 import 'dart:math';
-import 'contact_list.dart';
+import 'contact_card.dart';
 import 'add_contact.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(MaterialApp(
   home: MyApp(),
@@ -55,11 +56,25 @@ void main() => runApp(MaterialApp(
    _MyAppState createState() => _MyAppState();
 
  }
+
  class _MyAppState extends State<MyApp> {
 
    List<Contact> contacts = MyApp.contacts;
    List<Contact> displayingContacts = MyApp.displayingContacts;
    ScrollController controller = ScrollController();
+   final key = 'my_bool_key';
+
+   _save() async {
+     final prefs = await SharedPreferences.getInstance();
+     final value = ContactCard.timeFormat;
+     prefs.setBool(key, value);
+   }
+
+   _read() async {
+     final prefs = await SharedPreferences.getInstance();
+     ContactCard.timeFormat = prefs.getBool(key)!;
+     print("test");
+   }
 
    void showToast(String message) {
      Fluttertoast.showToast(
@@ -70,6 +85,18 @@ void main() => runApp(MaterialApp(
          backgroundColor: Colors.white,
          textColor: Colors.black,
          fontSize: 16.0);
+   }
+
+   void changeTimeFormat(){
+     if(ContactCard.timeFormat){
+       ContactCard.timeFormat = false;
+     }else{
+       ContactCard.timeFormat = true;
+     }
+     _save();
+     setState(() {
+       build(context);
+     });
    }
 
    Future loadList() async {
@@ -100,10 +127,9 @@ void main() => runApp(MaterialApp(
      }
    }
 
-
    @override
    Widget build(BuildContext context) {
-     print(DateTime.now());
+     _read();
      displayingContacts.sort((a, b) => b.time.compareTo(a.time));
      if (displayingContacts.isEmpty) {
        Center(child: CircularProgressIndicator());
@@ -112,6 +138,12 @@ void main() => runApp(MaterialApp(
        appBar: AppBar(
          title: Text('Contact List'),
          centerTitle: true,
+         leading: GestureDetector(
+           onTap: changeTimeFormat,
+           child: Icon(
+             Icons.autorenew,  // add custom icons also
+           ),
+         ),
        ),
        body: RefreshIndicator(onRefresh: loadList,
            child:
@@ -121,23 +153,19 @@ void main() => runApp(MaterialApp(
                itemBuilder: (context, index) {
                  return Column(
                      children: displayingContacts.map((contact) =>
-                         ContactList(contact)).toList()
+                         ContactCard(contact)).toList()
                  );
                }
            )
        ),
        floatingActionButton: FloatingActionButton(
          onPressed: () {
-           Navigator.pushReplacement(context, MaterialPageRoute<void>(
-             builder: (BuildContext context) => const AddContact(),
-           ),
-           );
+           Navigator.pushNamed(context, "add contact");
          },
          child: Icon(Icons.add),
        ),
      );
    }
-
 
    @override
    void initState() {
