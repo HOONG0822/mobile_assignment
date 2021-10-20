@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'contact.dart';
-import 'main.dart';
+import 'home.dart';
 
 class AddContact extends StatefulWidget {
   const AddContact({Key? key}) : super(key: key);
