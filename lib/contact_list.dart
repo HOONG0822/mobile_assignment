@@ -5,7 +5,8 @@ class ContactList extends StatelessWidget {
 
   Contact contact;
   ContactList(this.contact);
-
+  
+  //this function is used to show "1 hour(s) ago" etc.
   String getTextDisplay() {
 
     DateTime checkin = contact.time;
