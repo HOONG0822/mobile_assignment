@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'contact.dart';
+import 'package:share/share.dart';
 
-class ContactList extends StatelessWidget {
+class ContactCard extends StatelessWidget {
 
   Contact contact;
-  ContactList(this.contact);
+  static bool timeFormat = true;
+  ContactCard(this.contact);
 
+  //this function is used to show "1 hour(s) ago" etc.
   String getTextDisplay() {
 
     DateTime checkin = contact.time;
@@ -33,7 +36,6 @@ class ContactList extends StatelessWidget {
           numberDisplay += 1;
         }
       }else{
-        print("hour called");
         numberDisplay = hourDifference;
         unitDisplay = " hour(s) ago";
         if(minuteDifference < 0){
@@ -85,44 +87,63 @@ class ContactList extends StatelessWidget {
     return textDisplay;
   }
 
-  Widget buildCard(){
+  Widget buildCard(BuildContext context){
+    String timeDisplayStyle;
+    if(timeFormat){
+      timeDisplayStyle = contact.time.toString();
+    }else{
+      timeDisplayStyle = getTextDisplay();
+    }
     return Card(
-        margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Text(
-                contact.name,
-                style: TextStyle(
-                    fontSize: 18
-                )
-            ),
-            SizedBox(height:6),
-            Row(
-                children: <Widget>[
-                  Text(
-                      contact.number,
-                      style: TextStyle(
-                          fontSize: 15
-                      )
-                  ),
-                  SizedBox(width: 12),
-                  Text(
-                      getTextDisplay(),
-                      style:TextStyle(
-                          fontSize: 15
-                      )
-                  )
-                ]
-            )
-          ],
-        )
+      margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(
+              contact.name,
+              style: TextStyle(
+                  fontSize: 18
+              )
+          ),
+          SizedBox(height:6),
+          Row(
+              children: <Widget>[
+                Text(
+                    contact.number,
+                    style: TextStyle(
+                        fontSize: 15
+                    )
+                ),
+                SizedBox(width: 15),
+                Text(
+                    timeDisplayStyle,
+                    style:TextStyle(
+                        fontSize: 15
+                    )
+                ),
+                SizedBox(width:10),
+                TextButton(
+                    onPressed:contact.toString().isEmpty
+                        ? null
+                        : () => onShareData(context),
+                    child: Text('share'))
+              ]
+          )
+        ],
+      ),
     );
+  }
+
+  onShareData(BuildContext context) async {
+    final RenderBox box = context.findRenderObject() as RenderBox;
+    {
+      await Share.share(contact.toString(),
+          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-      return buildCard();
-    }
+    return buildCard(context);
   }
-
+}
