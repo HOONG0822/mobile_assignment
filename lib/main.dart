@@ -35,7 +35,6 @@ void main() => runApp(MaterialApp(
      Contact("Hong Jin Yi", "0144552136", 2019, 4, 25, 6, 47, 23),
      Contact("Wong Wen Xiong", "0133254512", 2020, 10, 23, 23, 59, 34)
    ];
-
    static List <Contact> displayingContacts = [
      Contact("Chan Saw Lin", "0152131113", 2021, 10, 20, 10, 20, 7),
      Contact("Lee Saw Loy", "0161231346", 2021, 7, 8, 10, 7, 20),
